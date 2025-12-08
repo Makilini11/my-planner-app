@@ -1,0 +1,28 @@
+<svg 
+    width="100%" 
+    height="100%" 
+    viewBox="0 0 100 100" 
+    xmlns="http://www.w3.org/2000/svg"
+>
+    {/* 1. Steps (படிப்படியான முன்னேற்றம்) - Dark Indigo (#4B0082) */}
+    
+    {/* Step 1 (மிகச் சிறியது) */}
+    <rect x="10" y="70" width="20" height="20" fill="#4B0082" />
+    
+    {/* Step 2 (நடுத்தர அளவு) */}
+    <rect x="30" y="50" width="20" height="40" fill="#4B0082" />
+    
+    {/* Step 3 (உயர்ந்தது - இலக்கை அடைவதற்கான படி) */}
+    <rect x="50" y="30" width="20" height="60" fill="#4B0082" />
+    
+    {/* 2. The Flag (வெற்றிக் கொடி) - Hot Pink (#FF69B4) */}
+    
+    {/* கொடிக்கம்பம் (Flagpole - Dark Indigo) */}
+    <line x1="70" y1="30" x2="70" y2="15" stroke="#4B0082" strokeWidth="3" strokeLinecap="round" />
+    
+    {/* கொடித் துணி (Flag Fabric - Hot Pink) */}
+    <rect x="70" y="15" width="20" height="10" rx="2" fill="#FF69B4" />
+
+    {/* குறிப்பு: SVG-ஐ Navbar-ல் பயன்படுத்தும் போது, 
+        width மற்றும் height பண்புகளை உங்களுக்குத் தேவையான அளவில் மாற்றுவது நல்லது. */}
+</svg>
