@@ -5,7 +5,7 @@ import colors from '../constants/colors';
 
 const initialTasks = [
     { id: 1, title: 'Project submit', category: 'Work', isCompleted: false },
-    { id: 2, title: 'Go to library', category: 'education', isCompleted: false },
+    { id: 2, title: 'Go to school', category: 'education', isCompleted: false },
     { id: 3, title: 'Learn react', category: 'Knowledge', isCompleted: false },
     { id: 4, title: 'Go to beach', category: 'Hobby', isCompleted: true }, 
     { id: 5, title: 'Prepare to lunch', category: 'Work', isCompleted: false },
