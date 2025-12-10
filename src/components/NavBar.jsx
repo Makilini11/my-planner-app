@@ -12,7 +12,7 @@ const Navbar = ({ handleLogout }) => {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '10px 20px',
-    backgroundColor: 'white',
+    backgroundColor:' #FFFFFF',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     color: colors.Text,
   };

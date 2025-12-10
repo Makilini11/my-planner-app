@@ -25,7 +25,7 @@ function Calendar() {
         const year = date.getFullYear();
         const month = date.getMonth();
         
-        const monthName = date.toLocaleDateString('ta-IN', { year: 'numeric', month: 'long' });
+        const monthName = date.toLocaleDateString('en-US', { month: 'long',year: 'numeric'});
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const firstDayOfMonth = date.getDay(); 
 
@@ -133,7 +133,7 @@ function Calendar() {
             cursor: 'pointer', position: 'relative'
         },
         selectedDay: {
-            backgroundColor: colors.Text + '40', // Darker background when selected
+            backgroundColor: colors.Text + '40', 
             color: 'white',
             border: `2px solid ${colors.Text}`,
         },
