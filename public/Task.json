@@ -1,0 +1,139 @@
+{
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Buy Groceries",
+        "description": "Milk, Eggs, Bread",
+        "completed": false,
+        "priority": "High",
+        "category": "Personal",
+        "dueDate": "2025-12-10"
+      },
+      {
+        "id": 2,
+        "title": "Complete UI Design",
+        "description": "Finish TaskGrid component UI",
+        "completed": false,
+        "priority": "Medium",
+        "category": "Work",
+        "dueDate": "2025-12-12"
+      },
+      {
+        "id": 3,
+        "title": "Read React Docs",
+        "description": "Hooks, Context API",
+        "completed": true,
+        "priority": "Low",
+        "category": "Study",
+        "dueDate": "2025-12-08"
+      },
+      {
+        "id": 4,
+        "title": "Workout Session",
+        "description": "30 mins cardio + stretching",
+        "completed": false,
+        "priority": "Medium",
+        "category": "Health",
+        "dueDate": "2025-12-11"
+      },
+      {
+        "id": 5,
+        "title": "Clean the House",
+        "description": "Living room, kitchen, bedroom",
+        "completed": false,
+        "priority": "Low",
+        "category": "Home",
+        "dueDate": "2025-12-15"
+      },
+      {
+        "id": 6,
+        "title": "Prepare Presentation",
+        "description": "Slides for client meeting",
+        "completed": false,
+        "priority": "High",
+        "category": "Work",
+        "dueDate": "2025-12-09"
+      },
+      {
+        "id": 7,
+        "title": "Pay Electricity Bill",
+        "description": "Online payment before due",
+        "completed": true,
+        "priority": "Medium",
+        "category": "Personal",
+        "dueDate": "2025-12-05"
+      },
+      {
+        "id": 8,
+        "title": "Watch Tutorial",
+        "description": "React Native AsyncStorage",
+        "completed": false,
+        "priority": "Low",
+        "category": "Study",
+        "dueDate": "2025-12-14"
+      },
+      {
+        "id": 9,
+        "title": "Organize Desktop Files",
+        "description": "Clean downloads and sort project folders",
+        "completed": false,
+        "priority": "Low",
+        "category": "Work",
+        "dueDate": "2025-12-18"
+      },
+      {
+        "id": 10,
+        "title": "Plan Weekend Trip",
+        "description": "Select location and check budget",
+        "completed": false,
+        "priority": "Medium",
+        "category": "Personal",
+        "dueDate": "2025-12-20"
+      },
+      {
+        "id": 11,
+        "title": "Study TypeScript",
+        "description": "Basic types, interfaces, generics",
+        "completed": false,
+        "priority": "High",
+        "category": "Study",
+        "dueDate": "2025-12-13"
+      },
+      {
+        "id": 12,
+        "title": "Meditation",
+        "description": "15 minutes breathing session",
+        "completed": true,
+        "priority": "Low",
+        "category": "Health",
+        "dueDate": "2025-12-07"
+      },
+      {
+        "id": 13,
+        "title": "Fix Bugs in App",
+        "description": "Resolve layout glitch & crash issue",
+        "completed": false,
+        "priority": "High",
+        "category": "Work",
+        "dueDate": "2025-12-11"
+      },
+      {
+        "id": 14,
+        "title": "Cook Dinner",
+        "description": "Egg fried rice",
+        "completed": false,
+        "priority": "Low",
+        "category": "Home",
+        "dueDate": "2025-12-09"
+      },
+      {
+        "id": 15,
+        "title": "Update Resume",
+        "description": "Add new project & update skills",
+        "completed": false,
+        "priority": "Medium",
+        "category": "Personal",
+        "dueDate": "2025-12-25"
+      }
+    ]
+  }

@@ -4,8 +4,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import colors from '../constants/colors';
 
+
+
 const Navbar = ({ handleLogout }) => {
   const location = useLocation();
+  
 
   const navContainerStyle = {
     display: 'flex',
@@ -88,6 +91,7 @@ const Navbar = ({ handleLogout }) => {
               <input type="text" placeholder="Search..." style={searchInputStyle} />
               <span role="img" aria-label="Messages" style={iconStyle}>💬</span>
           </div>
+           
       </div>
       
       

@@ -1,0 +1,50 @@
+
+.task-planner-container {
+  padding: 10px;
+}
+
+.controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  padding: 5px;
+  border-radius: 2px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 10px;
+  margin-right: 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #333;
+  color: rgb(250, 246, 246);
+  font-size: 1em;
+}
+
+.dropdowns select {
+  padding: 10px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #333;
+  color: rgb(250, 246, 246);
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+.no-tasks {
+  color: #5134a1;
+  text-align: center;
+  grid-column: 1 / -1;
+  font-size: 1.2em;
+}

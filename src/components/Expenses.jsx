@@ -83,7 +83,7 @@ function Expenses() {
 
             {/* பட்ஜெட் சுருக்கம் Card */}
             <div style={summaryCardStyle}>
-                <h3 style={{ color: colors.Text, marginBottom: '10px' }}>வரவுசெலவுத் திட்டம் (Budget Summary)</h3>
+                <h3 style={{ color: colors.Text, marginBottom: '10px' }}> Budget Summary </h3>
                 <p>Total Budjet Limit: <strong>₹{BUDGET_LIMIT.toLocaleString('en-IN')}</strong></p>
                 <p>Total Expenses: <strong style={{ color: colors.Primary }}>₹{totalSpent.toLocaleString('en-IN')}</strong></p>
                 <p>Balance: 
