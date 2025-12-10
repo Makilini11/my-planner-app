@@ -103,6 +103,11 @@ function Login() {
             required 
             style={inputStyle}
           />
+          <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+            <Link to="/forgot-password" style={{ ...linkStyle, fontSize: '0.9em', color: colors.Secondary }}>
+              Forgot Password?
+            </Link>
+          </div>
           <button type="submit" style={buttonStyle}>
              Login
           </button>

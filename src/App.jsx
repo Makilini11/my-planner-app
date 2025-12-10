@@ -87,7 +87,7 @@ import Notes from './components/Notes';
 import Calendar from './components/Calendar';
 import Activities from './components/Activities';
 import Profile from './components/Profile';
-
+import ForgotPassword from './components/ForgotPassword';
 function App() {
   return (
     <Routes>
@@ -95,8 +95,8 @@ function App() {
       <Route path="/" element={<Navigate to="/login" replace />} /> 
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* Protected Routes - Layout-ஐப் பயன்படுத்துகிறோம் */}
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+    
       <Route 
         path="/dashboard" 
         element={
@@ -105,18 +105,17 @@ function App() {
           </ProtectedRoute>
         } 
       >
-        {/* /dashboard-க்கு சென்றால் /dashboard/home-க்குச் செல்லும் */}
+      
         <Route index element={<Navigate to="home" replace />} /> 
         
-        {/* 1. Home Tab and its Sub-Navigation */}
+     
         <Route path="home" element={<Home />}>
             <Route index element={<Navigate to="tasks" replace />} /> 
             <Route path="tasks" element={<Tasks />} />
             <Route path="expenses" element={<Expenses />} />
             <Route path="notes" element={<Notes />} />
         </Route>
-        
-        {/* 2. Calendar Tab and its Sub-Navigation (Task, Expenses, Notes) */}
+   
         <Route path="calendar" element={<Calendar />}>
             <Route index element={<Navigate to="tasks" replace />} /> 
             <Route path="tasks" element={<Tasks />} />
@@ -124,7 +123,7 @@ function App() {
             <Route path="notes" element={<Notes />} />
         </Route>
         
-        {/* 3. Activities Tab and its Sub-Navigation (Task, Expenses, Notes) */}
+
         <Route path="activities" element={<Activities />}>
             <Route index element={<Navigate to="tasks" replace />} /> 
             <Route path="tasks" element={<Tasks />} />
@@ -132,7 +131,7 @@ function App() {
             <Route path="notes" element={<Notes />} />
         </Route>
 
-        {/* 4. Profile Route - Navbar-ல் இருந்தும் செல்லலாம் */}
+    
         <Route path="profile" element={<Profile />} />
         
       </Route>

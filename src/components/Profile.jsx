@@ -16,15 +16,13 @@ const Profile = () => {
             
             <div style={{ lineHeight: '1.8' }}>
                 <p><strong>Email:</strong> {currentUser?.email}</p>
-                <p><strong>UID:</strong> {currentUser?.uid}</p>
+                <p><strong>UID:</strong> {currentUser?.firstName}</p>
                 <p><strong>Accont Activated Date:</strong> {currentUser?.metadata?.creationTime ? new Date(currentUser.metadata.creationTime).toLocaleDateString('ta-IN') : 'N/A'}</p>
             </div>
             
             <h4 style={{ marginTop: '20px', color: colors.Primary }}>Settings</h4>
             <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                <li>Change Password</li>
-                <li>Update Email</li>
-                <li>Light/Dark Mode</li>
+              
             </ul>
         </div>
     );
