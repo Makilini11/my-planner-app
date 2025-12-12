@@ -16,7 +16,7 @@ const Activities = () => (
         <div style={{ padding: '0 10px' }}><SubNavigation /></div>
         
         
-        <div style={{padding: '20px', backgroundColor: 'white', borderRadius: '12px', marginTop: '20px', color: colors.Text}}>
+        <div style={{padding: '20px', backgroundColor:  '#72717140', borderRadius: '12px', marginTop: '20px', color: colors.Text}}>
             <p>Activities View</p>
            
             <Outlet /> 

@@ -1,139 +1,165 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db, auth } from '../services/firebase';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import colors from '../constants/colors';
 
-// மாதிரி குறிப்புகள்
-const initialNotes = [
-    { id: 1, title: 'Next Prject Analysis', content: 'Learn React Native and I want to achieve goal ', timestamp: '2025-12-08' },
-    { id: 2, title: 'Book Note', content: 'Rich Dad Poor Dad" by Robert Kiyosaki contrasts the financial philosophies of two father figures, emphasizing the importance of financial literacy and investing for wealth creation', timestamp: '2025-12-07' },
-    { id: 3, title: "First Achieve My Goal's ", content: 'I Finished My ComputerScience and I rreceived My Certificate', timestamp: '2025-12-06' },
-];
+export default function Notes() {
+    const [notes, setNotes] = useState([]);
+    const [newNote, setNewNote] = useState({ title: '', content: '', category: 'Personal', priority: 'Medium' });
+    const [editingId, setEditingId] = useState(null);
+    const [editingNote, setEditingNote] = useState({ title: '', content: '', category: 'Personal', priority: 'Medium' });
+    const userId = auth.currentUser?.uid;
 
-function Notes() {
-    const [notes, setNotes] = useState(initialNotes);
-    const [newNote, setNewNote] = useState({ title: '', content: '' });
+    // --- Fetch notes for this user ---
+    useEffect(() => {
+        if (!userId) return;
+        const fetchNotes = async () => {
+            try {
+                const notesCol = collection(db, 'users', userId, 'notes');
+                const notesSnapshot = await getDocs(notesCol);
+                const notesData = notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setNotes(notesData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)));
+            } catch (err) {
+                console.error('Error fetching notes:', err);
+            }
+        };
+        fetchNotes();
+    }, [userId]);
 
-
-    const handleAddNote = (e) => {
+    // --- Add new note ---
+    const handleAddNote = async (e) => {
         e.preventDefault();
-        if (newNote.title && newNote.content) {
-            const newEntry = {
-                id: Date.now(), // Unique ID
-                title: newNote.title,
-                content: newNote.content,
-                timestamp: new Date().toISOString().substring(0, 10),
+        if (!newNote.title || !newNote.content) return alert('Enter title & content');
+        if (!userId) return;
+
+        try {
+            const noteData = {
+                ...newNote,
+                timestamp: new Date().toISOString(),
             };
-            setNotes([newEntry, ...notes]); 
-            setNewNote({ title: '', content: '' }); 
-        } else {
-            alert('Plesase Enter The Title And Content');
+            const docRef = await addDoc(collection(db, 'users', userId, 'notes'), noteData);
+            setNotes([{ id: docRef.id, ...noteData }, ...notes]);
+            setNewNote({ title: '', content: '', category: 'Personal', priority: 'Medium' });
+        } catch (err) {
+            console.error('Error adding note:', err);
         }
     };
 
-   
-    const handleDeleteNote = (id) => {
-        setNotes(notes.filter(note => note.id !== id));
+    // --- Delete note ---
+    const handleDeleteNote = async (id) => {
+        if (!window.confirm('Delete this note?')) return;
+        if (!userId) return;
+        try {
+            await deleteDoc(doc(db, 'users', userId, 'notes', id));
+            setNotes(notes.filter(note => note.id !== id));
+        } catch (err) {
+            console.error('Error deleting note:', err);
+        }
     };
 
-
-
-    const notesContainerStyle = { padding: '20px', backgroundColor: colors.Neutral, minHeight: '80vh' };
-    
-    const cardStyle = { backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.05)', marginBottom: '20px' };
-
-    const formInputStyle = { padding: '10px', margin: '5px 0', borderRadius: '5px', border: `1px solid ${colors.Secondary}`, width: '100%', boxSizing: 'border-box' };
-    
-    const formTextAreaStyle = { ...formInputStyle, height: '100px', resize: 'vertical' };
-
-    const formButtonStyle = { padding: '10px 15px', backgroundColor: colors.Primary, color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px', width: '100%', fontWeight: 'bold' };
-    
-    const noteItemStyle = { 
-        padding: '15px', 
-        border: `1px solid ${colors.Secondary}`, 
-        borderRadius: '8px', 
-        marginBottom: '10px',
-        backgroundColor: colors.Neutral + 'aa',
+    // --- Start editing ---
+    const startEdit = (note) => {
+        setEditingId(note.id);
+        setEditingNote({ ...note });
     };
-    
-    const noteHeaderStyle = { 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '5px',
-        borderBottom: `1px dotted ${colors.Secondary}`,
-        paddingBottom: '5px'
+
+    // --- Submit edit ---
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        if (!userId) return;
+        try {
+            const updatedData = {
+                ...editingNote,
+                timestamp: new Date().toISOString(),
+            };
+            await updateDoc(doc(db, 'users', userId, 'notes', editingId), updatedData);
+            setNotes(notes.map(note => note.id === editingId ? { id: editingId, ...updatedData } : note));
+            setEditingId(null);
+            setEditingNote({ title: '', content: '', category: 'Personal', priority: 'Medium' });
+        } catch (err) {
+            console.error('Error updating note:', err);
+        }
     };
-    
-    const deleteButtonStyle = {
-        background: 'none',
-        border: 'none',
-        color: 'red',
-        cursor: 'pointer',
-        fontSize: '1.2em',
-        marginLeft: '10px',
-        opacity: 0.7,
-        transition: 'opacity 0.2s',
-    };
+
+    // --- Styles ---
+    const containerStyle = { padding: '20px', minHeight: '80vh', background: colors.backgroundGradient };
+    const cardStyle = { backdropFilter: 'blur(16px)', background: '#72717140', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '16px', padding: '25px', boxShadow: '0 15px 30px rgba(0,0,0,0.2)', color: 'white', marginBottom: '20px' };
+    const inputStyle = { width: '100%', padding: '12px', margin: '10px 0', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', outline: 'none' };
+    const textareaStyle = { ...inputStyle, height: '100px', resize: 'vertical' };
+    const selectStyle = { ...inputStyle };
+    const buttonStyle = { padding: '12px', borderRadius: '8px', border: 'none', backgroundColor: colors.Primary, color: 'white', cursor: 'pointer', fontWeight: 'bold', width: '100%', marginTop: '10px' };
+    const noteItemStyle = { backdropFilter: 'blur(12px)', background: '#72717130', borderRadius: '12px', padding: '15px', marginBottom: '10px', border: '1px solid rgba(255,255,255,0.15)' };
+    const noteHeaderStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' };
+    const smallButtonStyle = { marginLeft: '10px', padding: '6px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.9em' };
 
     return (
-        <div style={notesContainerStyle}>
-            <h2 style={{ color: colors.Text, marginBottom: '20px', paddingBottom: '10px', borderBottom: `2px solid ${colors.Secondary}` }}>
-               Notes
-            </h2>
+        <div style={containerStyle}>
+            <h2 style={{ marginBottom: '20px', color: 'white', borderBottom: `2px solid ${colors.Primary}`, paddingBottom: '10px' }}>Notes</h2>
 
-          
+            {/* Add New Note */}
             <div style={cardStyle}>
-                <h3 style={{ color: colors.Text, marginBottom: '15px' }}>Add Note</h3>
+                <h3>Add Note</h3>
                 <form onSubmit={handleAddNote}>
-                    <input 
-                        type="text" 
-                        placeholder=" Title" 
-                        style={formInputStyle} 
-                        value={newNote.title}
-                        onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
-                        required
-                    />
-                    <textarea 
-                        placeholder="Content" 
-                        style={formTextAreaStyle} 
-                        value={newNote.content}
-                        onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
-                        required
-                    />
-                    <button type="submit" style={formButtonStyle}>Save Note</button>
+                    <input type="text" placeholder="Title" value={newNote.title} onChange={e => setNewNote({ ...newNote, title: e.target.value })} style={inputStyle} required />
+                    <textarea placeholder="Content" value={newNote.content} onChange={e => setNewNote({ ...newNote, content: e.target.value })} style={textareaStyle} required />
+                    <select value={newNote.category} onChange={e => setNewNote({ ...newNote, category: e.target.value })} style={selectStyle}>
+                        <option>Personal</option>
+                        <option>Work</option>
+                        <option>Study</option>
+                        <option>Other</option>
+                    </select>
+                    <select value={newNote.priority} onChange={e => setNewNote({ ...newNote, priority: e.target.value })} style={selectStyle}>
+                        <option>High</option>
+                        <option>Medium</option>
+                        <option>Low</option>
+                    </select>
+                    <button type="submit" style={buttonStyle}>Save Note</button>
                 </form>
             </div>
 
-        
+            {/* Notes List */}
             <div style={cardStyle}>
-                <h3 style={{ color: colors.Text, marginBottom: '15px' }}>Save Notes</h3>
-                {notes.length === 0 ? (
-                    <p style={{ color: colors.Text + '70' }}>No notes here.. please save the note.</p>
-                ) : (
-                    <div>
-                        {notes.map(note => (
-                            <div key={note.id} style={noteItemStyle}>
-                                <div style={noteHeaderStyle}>
-                                    <strong style={{ color: colors.Text }}>{note.title}</strong>
-                                    <div style={{display: 'flex', alignItems: 'center'}}>
-                                        <small style={{ color: colors.Text + '70' }}>{note.timestamp}</small>
-                                        <button 
-                                            onClick={() => handleDeleteNote(note.id)} 
-                                            style={deleteButtonStyle}
-                                            title="Delete Note"
-                                        >
-                                            ❌
-                                        </button>
+                <h3>Saved Notes</h3>
+                {notes.length === 0 ? <p style={{ color: 'rgba(255,255,255,0.6)' }}>No notes yet...</p> :
+                    notes.map(note => (
+                        <div key={note.id} style={noteItemStyle}>
+                            {editingId === note.id ? (
+                                <form onSubmit={handleEditSubmit}>
+                                    <input type="text" value={editingNote.title} onChange={e => setEditingNote({ ...editingNote, title: e.target.value })} style={inputStyle} required />
+                                    <textarea value={editingNote.content} onChange={e => setEditingNote({ ...editingNote, content: e.target.value })} style={textareaStyle} required />
+                                    <select value={editingNote.category} onChange={e => setEditingNote({ ...editingNote, category: e.target.value })} style={selectStyle}>
+                                        <option>Personal</option>
+                                        <option>Work</option>
+                                        <option>Study</option>
+                                        <option>Other</option>
+                                    </select>
+                                    <select value={editingNote.priority} onChange={e => setEditingNote({ ...editingNote, priority: e.target.value })} style={selectStyle}>
+                                        <option>High</option>
+                                        <option>Medium</option>
+                                        <option>Low</option>
+                                    </select>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button type="submit" style={{ ...buttonStyle, flex: 1 }}>Update</button>
+                                        <button type="button" onClick={() => setEditingId(null)} style={{ ...buttonStyle, flex: 1, backgroundColor: '#6c757d' }}>Cancel</button>
                                     </div>
+                                </form>
+                            ) : (
+                                <div>
+                                    <div style={noteHeaderStyle}>
+                                        <strong>{note.title}</strong>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <small style={{ color: 'rgba(255,255,255,0.6)' }}>{note.timestamp.substring(0, 10)}</small>
+                                            <span style={{ marginLeft: '10px', fontSize: '0.85em', color: '#ccc' }}>{note.category} | {note.priority}</span>
+                                            <button onClick={() => startEdit(note)} style={{ ...smallButtonStyle, backgroundColor: colors.Primary, color: 'white' }}>✍️ Edit</button>
+                                            <button onClick={() => handleDeleteNote(note.id)} style={{ ...smallButtonStyle, backgroundColor: 'red', color: 'white' }}>❌ Delete</button>
+                                        </div>
+                                    </div>
+                                    <p>{note.content}</p>
                                 </div>
-                                <p style={{ margin: 0, color: colors.Text }}>{note.content}</p>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            )}
+                        </div>
+                    ))}
             </div>
-            
         </div>
     );
 }
-
-export default Notes;
