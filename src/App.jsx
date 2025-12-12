@@ -88,6 +88,7 @@ import Calendar from './components/Calendar';
 import Activities from './components/Activities';
 import Profile from './components/Profile';
 import ForgotPassword from './components/ForgotPassword';
+
 function App() {
   return (
     <Routes>
@@ -96,7 +97,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-    
+      
       <Route 
         path="/dashboard" 
         element={

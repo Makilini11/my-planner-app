@@ -1,129 +1,58 @@
-// src/components/ForgotPassword.jsx
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import colors from '../constants/colors';
+import React, { useState } from "react";
+import { sendResetEmail } from "../services/authService";
+import { Link } from "react-router-dom";
 
-function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { resetPassword } = useAuth(); // AuthContext-இல் இருந்து resetPassword-ஐப் பெறுகிறது
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setMessage('');
-    setLoading(true);
+export default function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    try {
-      await resetPassword(email);
-      setMessage('✅ Password reset link successfully sent to your email!');
-      setEmail(''); // மின்னஞ்சல் அனுப்பிய பின் ஃபீல்டை அழிக்கவும்
-    } catch (err) {
-      // Firebase பிழைகளைக் காட்டுகிறது
-      setError('Error sending reset link. Please check your email: ' + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr(""); setMsg("");
+    setLoading(true);
+    try {
+      await sendResetEmail(email);
+      setMsg("✅ Password reset link sent to your email!");
+      setEmail("");
+    } catch (error) {
+      setErr(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // --- Login.jsx-இலிருந்து ஸ்டைல்களை மீண்டும் பயன்படுத்துதல் ---
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    backgroundColor: colors.Neutral, 
-    padding: '20px',
-  };
+  return (
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Reset Password</h2>
+        {err && <div style={styles.error}>{err}</div>}
+        {msg && <div style={styles.success}>{msg}</div>}
 
-  const formContainerStyle = {
-    backgroundColor: 'white', 
-    padding: '40px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    width: '100%',
-    maxWidth: '400px',
-    textAlign: 'center',
-    border: `2px solid ${colors.Secondary}`,
-  };
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input type="email" placeholder="Enter email" value={email} onChange={(e)=>setEmail(e.target.value)} style={styles.input} disabled={loading}/>
+          <button type="submit" style={styles.primaryButton} disabled={loading}>
+            {loading ? "Sending..." : "Send Reset Link"}
+          </button>
+        </form>
 
-  const inputStyle = {
-    width: 'calc(100% - 20px)',
-    padding: '12px 10px',
-    margin: '10px 0',
-    borderRadius: '8px',
-    border: `1px solid ${colors.Secondary}`, 
-    boxSizing: 'border-box',
-    color: colors.Text,
-  };
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '15px',
-    margin: '20px 0 10px 0',
-    backgroundColor: colors.Primary, 
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    opacity: loading ? 0.7 : 1, // Loading effect
-  };
-
-  const linkStyle = {
-    color: colors.Text, 
-    textDecoration: 'none',
-    fontWeight: 'bold',
-  };
-
-  const errorStyle = {
-      color: colors.Primary, 
-      fontWeight: 'bold',
-      marginBottom: '10px',
-  };
-
-  return (
-    <div style={containerStyle}>
-      <div style={formContainerStyle}>
-        <h2 style={{ color: colors.Text, marginBottom: '20px' }}>
-          Reset Password
-        </h2>
-        
-        {error && <p style={errorStyle}>{error}</p>}
-        {message && <p style={{ color: 'green', fontWeight: 'bold', marginBottom: '10px' }}>{message}</p>}
-
-        <form onSubmit={handleSubmit}>
-          <p style={{ marginBottom: '20px', fontSize: '0.9em', color: colors.Text }}>
-            உங்கள் கணக்கின் மின்னஞ்சலை உள்ளிடவும். கடவுச்சொல் மீட்டமைப்பு இணைப்பு உங்களுக்கு அனுப்பப்படும்.
-          </p>
-          <input 
-            type="email" 
-            placeholder="Enter Email Address" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-            style={inputStyle}
-            disabled={loading}
-          />
-
-          <button type="submit" style={buttonStyle} disabled={loading}>
-            {loading ? 'Sending...' : 'Send Reset Link'}
-          </button>
-        </form>
-        
-        <p style={{ color: colors.Text, marginTop: '20px' }}>
-          <Link to="/login" style={linkStyle}>
-            Back to Login 
-          </Link>
-        </p>
-      </div>
-    </div>
-  );
+        <p style={{ marginTop: 12 }}>
+          Back to <Link to="/login" style={styles.linkButton}>Login</Link>
+        </p>
+      </div>
+    </div>
+  );
 }
 
-export default ForgotPassword;
+const styles = {
+  container: { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f4f6fd" },
+  card: { background: "#fff", padding: 40, borderRadius: 12, boxShadow: "0 8px 20px rgba(0,0,0,0.1)", width: 400, display: "flex", flexDirection: "column", alignItems: "center" },
+  title: { marginBottom: 20, fontSize: 28, color: "#021a4e" },
+  form: { width: "100%", display: "flex", flexDirection: "column", gap: 12 },
+  input: { padding: "12px 16px", borderRadius: 8, border: "1px solid #ccc", fontSize: 16 },
+  primaryButton: { padding: "12px", background: "#021a4e", color: "#fff", borderRadius: 8, fontWeight: 600, cursor: "pointer", marginTop: 8 },
+  linkButton: { color: "#021a4e", textDecoration: "underline", cursor: "pointer", fontSize: 14 },
+  error: { color: "red", marginBottom: 12 },
+  success: { color: "green", marginBottom: 12 },
+};
