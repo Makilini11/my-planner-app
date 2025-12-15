@@ -86,7 +86,7 @@ function Calendar() {
         alignItems: 'center',
         justifyContent: 'center',
         margin: 2,
-        background: isSelected ? '#0f1a27' : '#0f1a2740', // Tasks screen dark bg
+        background: isSelected ? '#72717140' : '#72717120', // Notes-style glass
         color: 'white',
         cursor: 'pointer',
         borderRadius: 12,
@@ -114,8 +114,8 @@ function Calendar() {
 
   const cardStyle = {
     backdropFilter: 'blur(16px)',
-    background: '#0f1a2740', // Tasks screen color
-    border: '1px solid rgba(255,255,255,0.15)',
+    background: colors.backgroundGradient,
+    border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '16px',
     padding: 25,
     boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
@@ -128,14 +128,14 @@ function Calendar() {
     borderRadius: 8,
     border: 'none',
     backgroundColor: colors.Primary,
-    color: 'white',
+    color: 'black',
     cursor: 'pointer',
     fontWeight: 'bold',
   };
 
   const inputStyle = {
     width: '100%', padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)',
-    backgroundColor: '#0f1a2740', color: 'white', marginBottom: 10, outline: 'none'
+    backgroundColor: '#72717140', color: 'white', marginBottom: 10, outline: 'none'
   };
 
   return (
@@ -175,7 +175,7 @@ function Calendar() {
         ) : <p>Click a date to see events.</p>}
       </div>
 
-      {/* Modal for adding events */}
+      {/* Modal */}
       <Modal
         isOpen={modalOpen}
         onRequestClose={() => setModalOpen(false)}
@@ -183,7 +183,7 @@ function Calendar() {
           content: {
             maxWidth: 400, margin: 'auto', padding: 20,
             borderRadius: 16, backdropFilter: 'blur(16px)',
-            background: '#0f1a2740', color: 'white'
+            background: colors.backgroundGradient, color: 'white'
           }
         }}
       >
