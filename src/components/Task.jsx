@@ -322,63 +322,178 @@
 
 
 
-import React, { useState } from "react";
-import { db } from "../services/firebase";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { useAuth } from "../contexts/AuthContext";
+import React, { useState, useEffect } from "react";
+import { db, auth } from "../services/firebase";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp } from "firebase/firestore";
 import colors from "../constants/colors";
 
-export default function AddTask() {
-  const { currentUser } = useAuth();
+export default function Tasks() {
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState({ task: "", description: "", category: "Personal", priority: "Medium", dueDate: "" });
+  const [editingId, setEditingId] = useState(null);
+  const [editingTask, setEditingTask] = useState({ task: "", description: "", category: "Personal", priority: "Medium", dueDate: "" });
 
-  const [task, setTask] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("Personal");
-  const [priority, setPriority] = useState("Medium");
-  const [dueDate, setDueDate] = useState("");
+  const userId = auth.currentUser?.uid;
 
-  const handleSubmit = async (e) => {
+  // --- Fetch tasks for this user ---
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchTasks = async () => {
+      try {
+        const tasksCol = collection(db, "users", userId, "tasks");
+        const snapshot = await getDocs(tasksCol);
+        const tasksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Sort by createdAt descending
+        setTasks(tasksData.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds));
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
+      }
+    };
+
+    fetchTasks();
+  }, [userId]);
+
+  // --- Add new task ---
+  const handleAddTask = async (e) => {
     e.preventDefault();
-    if (!currentUser) return alert("Login first!");
-    await addDoc(collection(db, "tasks"), {
-      task,
-      description,
-      category,
-      priority,
-      dueDate,
-      isCompleted: false,
-      userId: currentUser.uid,
-      createdAt: serverTimestamp(),
-    });
-    setTask(""); setDescription(""); setDueDate("");
+    if (!userId) return alert("Login first!");
+    if (!newTask.task || !newTask.description) return alert("Enter task & description");
+
+    try {
+      const taskData = {
+        ...newTask,
+        isCompleted: false,
+        createdAt: serverTimestamp(),
+      };
+
+      const docRef = await addDoc(collection(db, "users", userId, "tasks"), taskData);
+      setTasks([{ id: docRef.id, ...taskData }, ...tasks]);
+      setNewTask({ task: "", description: "", category: "Personal", priority: "Medium", dueDate: "" });
+    } catch (err) {
+      console.error("Error adding task:", err);
+    }
   };
 
+  // --- Delete task ---
+  const handleDeleteTask = async (id) => {
+    if (!window.confirm("Delete this task?")) return;
+    if (!userId) return;
+
+    try {
+      await deleteDoc(doc(db, "users", userId, "tasks", id));
+      setTasks(tasks.filter(t => t.id !== id));
+    } catch (err) {
+      console.error("Error deleting task:", err);
+    }
+  };
+
+  // --- Start editing ---
+  const startEdit = (task) => {
+    setEditingId(task.id);
+    setEditingTask({ ...task });
+  };
+
+  // --- Submit edit ---
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!userId) return;
+
+    try {
+      const updatedData = {
+        ...editingTask,
+      };
+
+      await updateDoc(doc(db, "users", userId, "tasks", editingId), updatedData);
+      setTasks(tasks.map(t => t.id === editingId ? { id: editingId, ...updatedData } : t));
+      setEditingId(null);
+      setEditingTask({ task: "", description: "", category: "Personal", priority: "Medium", dueDate: "" });
+    } catch (err) {
+      console.error("Error updating task:", err);
+    }
+  };
+
+  // --- Styles ---
+  const containerStyle = { padding: 20, minHeight: "80vh", background: colors.backgroundGradient };
+  const cardStyle = { backdropFilter: "blur(16px)", background: "#72717140", borderRadius: 16, padding: 25, marginBottom: 20, color: "white" };
+  const inputStyle = { width: "100%", padding: 12, margin: "10px 0", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.1)", color: "white", outline: "none" };
+  const textareaStyle = { ...inputStyle, height: 100, resize: "vertical" };
+  const selectStyle = { ...inputStyle };
+  const buttonStyle = { width: "100%", padding: 12, borderRadius: 8, border: "none", backgroundColor: colors.Primary, color: colors.Primary, fontWeight: "bold", marginTop: 10, cursor: "pointer" };
+  const taskItemStyle = { backdropFilter: "blur(12px)", background: "#72717130", borderRadius: 12, padding: 15, marginBottom: 10, border: "1px solid rgba(255,255,255,0.15)" };
+  const taskHeaderStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 };
+  const smallButtonStyle = { marginLeft: 10, padding: "6px 10px", borderRadius: 6, border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.9em" };
+
   return (
-    <div style={{ padding: "20px", minHeight: "80vh", background: colors.backgroundGradient }}>
-      <div style={{
-        backdropFilter: "blur(16px)",
-        background: "#72717140",
-        border: "1px solid rgba(255,255,255,0.15)",
-        borderRadius: "16px",
-        padding: "25px",
-        maxWidth: "600px",
-        margin: "0 auto 20px"
-      }}>
-        <h2 style={{ color: "white", marginBottom: "20px", borderBottom: `2px solid ${colors.Primary}`, paddingBottom: "10px" }}>
-          Add New Task
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <input type="text" placeholder="Task Title" value={task} onChange={e=>setTask(e.target.value)} required style={{ width:"100%", padding:12, margin:"10px 0", borderRadius:8, border:"1px solid rgba(255,255,255,0.2)", backgroundColor:"rgba(255,255,255,0.1)", color:"white" }} />
-          <textarea placeholder="Description" value={description} onChange={e=>setDescription(e.target.value)} style={{ width:"100%", padding:12, margin:"10px 0", borderRadius:8, border:"1px solid rgba(255,255,255,0.2)", backgroundColor:"rgba(255,255,255,0.1)", color:"white", height:100 }} />
-          <select value={category} onChange={e=>setCategory(e.target.value)} style={{ width:"100%", padding:12, marginBottom:10, borderRadius:8 }}>
-            <option>Personal</option><option>Office</option>
+    <div style={containerStyle}>
+      <h2 style={{ color: "white", marginBottom: 20, borderBottom: `2px solid ${colors.Primary}`, paddingBottom: 10 }}>Tasks</h2>
+
+      {/* Add New Task */}
+      <div style={cardStyle}>
+        <h3>Add Task</h3>
+        <form onSubmit={handleAddTask}>
+          <input type="text" placeholder="Task Title" value={newTask.task} onChange={e => setNewTask({ ...newTask, task: e.target.value })} style={inputStyle} required />
+          <textarea placeholder="Description" value={newTask.description} onChange={e => setNewTask({ ...newTask, description: e.target.value })} style={textareaStyle} required />
+          <select value={newTask.category} onChange={e => setNewTask({ ...newTask, category: e.target.value })} style={selectStyle}>
+            <option>Personal</option>
+            <option>Office</option>
+            <option>Study</option>
+            <option>Other</option>
           </select>
-          <select value={priority} onChange={e=>setPriority(e.target.value)} style={{ width:"100%", padding:12, marginBottom:10, borderRadius:8 }}>
-            <option>High</option><option>Medium</option><option>Low</option>
+          <select value={newTask.priority} onChange={e => setNewTask({ ...newTask, priority: e.target.value })} style={selectStyle}>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
           </select>
-          <input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)} style={{ width:"100%", padding:12, marginBottom:10, borderRadius:8 }} />
-          <button type="submit" style={{ width:"100%", padding:12, borderRadius:8, border:"none", backgroundColor:colors.Primary, color:"white", fontWeight:"bold" }}>Add Task</button>
+          <input type="date" value={newTask.dueDate} onChange={e => setNewTask({ ...newTask, dueDate: e.target.value })} style={inputStyle} />
+          <button type="submit" style={buttonStyle}>Add Task</button>
         </form>
+      </div>
+
+      {/* Task List */}
+      <div style={cardStyle}>
+        <h3>Saved Tasks</h3>
+        {tasks.length === 0 ? <p style={{ color: "rgba(255,255,255,0.6)" }}>No tasks yet...</p> :
+          tasks.map(task => (
+            <div key={task.id} style={taskItemStyle}>
+              {editingId === task.id ? (
+                <form onSubmit={handleEditSubmit}>
+                  <input type="text" value={editingTask.task} onChange={e => setEditingTask({ ...editingTask, task: e.target.value })} style={inputStyle} required />
+                  <textarea value={editingTask.description} onChange={e => setEditingTask({ ...editingTask, description: e.target.value })} style={textareaStyle} required />
+                  <select value={editingTask.category} onChange={e => setEditingTask({ ...editingTask, category: e.target.value })} style={selectStyle}>
+                    <option>Personal</option>
+                    <option>Office</option>
+                    <option>Study</option>
+                    <option>Other</option>
+                  </select>
+                  <select value={editingTask.priority} onChange={e => setEditingTask({ ...editingTask, priority: e.target.value })} style={selectStyle}>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                  </select>
+                  <input type="date" value={editingTask.dueDate} onChange={e => setEditingTask({ ...editingTask, dueDate: e.target.value })} style={inputStyle} />
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button type="submit" style={{ ...buttonStyle, flex: 1 }}>Update</button>
+                    <button type="button" onClick={() => setEditingId(null)} style={{ ...buttonStyle, flex: 1, backgroundColor: "#6c757d" }}>Cancel</button>
+                  </div>
+                </form>
+              ) : (
+                <div>
+                  <div style={taskHeaderStyle}>
+                    <strong>{task.task}</strong>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <small style={{ color: 'rgba(255,255,255,0.6)' }}>{task.dueDate}</small>
+                      <span style={{ marginLeft: 10, fontSize: "0.85em", color: "#ccc" }}>{task.category} | {task.priority}</span>
+                      <button onClick={() => startEdit(task)} style={{ ...smallButtonStyle, backgroundColor: colors.Primary, color: colors.Primary }}>✍️ Edit</button>
+                      <button onClick={() => handleDeleteTask(task.id)} style={{ ...smallButtonStyle, backgroundColor: "red", color: colors.Primary}}>❌ Delete</button>
+                    </div>
+                  </div>
+                  <p>{task.description}</p>
+                </div>
+              )}
+            </div>
+          ))
+        }
       </div>
     </div>
   );

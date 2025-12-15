@@ -171,7 +171,7 @@ const Navbar = ({ handleLogout }) => {
   });
 
   const logoutButtonStyle = {
-    background: colors.google,  // Matching the accent of Google button
+    background: colors.accent,  // Matching the accent of Google button
     color: 'white',
     padding: '10px 18px',
     borderRadius: '12px',

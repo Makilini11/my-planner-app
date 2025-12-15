@@ -81,7 +81,7 @@ import Register from './components/Register';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import Layout from './components/Layout'; 
 import Home from './components/Home'; 
-import Tasks from './components/Tasks';
+import Tasks from './components/Task';
 import Expenses from './components/Expenses';
 import Notes from './components/Notes';
 import Calendar from './components/Calendar';

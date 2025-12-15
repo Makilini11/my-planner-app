@@ -176,6 +176,11 @@ export default function Login() {
       <div style={styles.circle2}></div>
 
       <div style={styles.card}>
+        {/* Logo */}
+        <div style={styles.logoWrapper}>
+          <img src="/logo.png" alt="App Logo" style={styles.logo} />
+        </div>
+
         <h2 style={styles.title}>Welcome Back</h2>
         <p style={styles.subtitle}>Login to continue</p>
 
@@ -215,6 +220,14 @@ export default function Login() {
         </form>
 
         <button onClick={handleGoogle} style={styles.googleButton}>
+          <span style={{ marginRight: 8, display: "inline-flex", alignItems: "center" }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533.5 544.3" width="18" height="18">
+              <path fill="#4285f4" d="M533.5 278.4c0-18.4-1.5-36-4.4-53.3H272v100.9h146.9c-6.3 33.7-25.2 62.2-53.7 81.2v67h86.9c50.7-46.7 80.4-115.6 80.4-195.8z"/>
+              <path fill="#34a853" d="M272 544.3c72.8 0 133.9-24 178.5-65.4l-86.9-67c-24.2 16.3-55 26-91.6 26-70.5 0-130.2-47.7-151.6-111.8h-89.4v70.6c44.8 88.2 137.8 147.6 241 147.6z"/>
+              <path fill="#fbbc04" d="M120.9 315.7c-10.7-31.7-10.7-65.8 0-97.5v-70.6h-89.4c-38.9 77.9-38.9 168.8 0 246.7l89.4-78.6z"/>
+              <path fill="#ea4335" d="M272 107.3c37.7 0 71.7 12.9 98.4 34.7l73.9-73.9C405.9 24 344.8 0 272 0 169.8 0 76.8 59.4 32 147.6l89.4 70.6C141.8 155 201.5 107.3 272 107.3z"/>
+            </svg>
+          </span>
           Sign in with Google
         </button>
 
@@ -241,92 +254,90 @@ const styles = {
     padding: 20,
   },
 
-  /* Floating circles */
   circle1: {
-    position: "absolute",
-    width: 300,
-    height: 300,
-    borderRadius: "50%",
-    background: "rgba(255,255,255,0.12)",
-    top: 40,
-    left: 40,
-    filter: "blur(80px)",
-  },
-
-  circle2: {
     position: "absolute",
     width: 350,
     height: 350,
     borderRadius: "50%",
-    background: "rgba(255,255,255,0.10)",
-    bottom: 60,
-    right: 60,
-    filter: "blur(90px)",
+    background: "rgba(156, 77, 255, 0.15)",
+    top: -50,
+    left: -50,
+    filter: "blur(100px)",
+    animation: "float 8s ease-in-out infinite",
+  },
+
+  circle2: {
+    position: "absolute",
+    width: 400,
+    height: 400,
+    borderRadius: "50%",
+    background: "rgba(0, 200, 255, 0.12)",
+    bottom: -70,
+    right: -70,
+    filter: "blur(120px)",
+    animation: "float 10s ease-in-out infinite",
   },
 
   card: {
-    backdropFilter: "blur(16px)",
+    backdropFilter: "blur(20px)",
     background: colors.cardGlass,
     border: `1px solid ${colors.borderGlass}`,
     padding: "45px 40px",
-    borderRadius: 20,
+    borderRadius: 25,
     width: 380,
-    boxShadow: "0 25px 45px rgba(0,0,0,0.20)",
+    boxShadow: "0 25px 60px rgba(0,0,0,0.25)",
     textAlign: "center",
-    animation: "fadeIn 0.8s ease",
+    transition: "0.3s",
   },
 
-  title: {
-    fontSize: 32,
-    fontWeight: 700,
-    color: "white",
-    marginBottom: 6,
-  },
-
-  subtitle: {
-    fontSize: 15,
-    color: colors.gray,
-    marginBottom: 25,
-  },
-
-  form: {
+  logoWrapper: {
+    width: 100,
+    height: 100,
+    margin: "0 auto 20px auto",
+    borderRadius: "50%",
+    background: "rgba(255, 255, 255, 0.1)", // soft glow behind logo
     display: "flex",
-    flexDirection: "column",
-    gap: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
+  logo: {
+    width: 60,
+    height: 60,
+    objectFit: "contain",
+  },
+
+  title: { fontSize: 32, fontWeight: 700, color: colors.primary, marginBottom: 6 },
+  subtitle: { fontSize: 15, color: colors.gray, marginBottom: 25 },
+
+  form: { display: "flex", flexDirection: "column", gap: 16 },
   inputWrapper: {
     display: "flex",
     alignItems: "center",
     background: colors.inputBg,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingLeft: 12,
     border: `1px solid ${colors.borderGlass}`,
+    transition: "0.25s",
   },
-
-  icon: {
-    marginRight: 10,
-    fontSize: 18,
-    color: "white",
-  },
-
+  icon: { marginRight: 10, fontSize: 18, color: colors.primary },
   input: {
     flex: 1,
     padding: "12px 14px",
     border: "none",
     background: "transparent",
     fontSize: 16,
-    color: "white",
+    color: colors.primary,
     outline: "none",
   },
 
   primaryButton: {
     padding: "12px",
-    background: "white",
-    color: "#4A34DD",
+    background: colors.accent,
+    color: "#fff",
     fontSize: 17,
     fontWeight: 700,
-    borderRadius: 10,
+    borderRadius: 12,
     border: "none",
     cursor: "pointer",
     transition: "0.25s",
@@ -336,33 +347,23 @@ const styles = {
     padding: "12px",
     background: colors.google,
     color: "#fff",
-    borderRadius: 10,
+    borderRadius: 12,
     cursor: "pointer",
     marginTop: 15,
     fontWeight: 600,
     border: "none",
     fontSize: 16,
+    transition: "0.25s",
   },
 
-  linkButton: {
-    color: "white",
-    textDecoration: "underline",
-    cursor: "pointer",
-    fontSize: 14,
-  },
-
-  rowBetween: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
+  linkButton: { color: "#fff", textDecoration: "underline", cursor: "pointer", fontSize: 14 },
+  rowBetween: { display: "flex", justifyContent: "flex-end" },
 
   error: {
-    background: "rgba(255,0,0,0.20)",
+    background: "rgba(255,107,107,0.2)",
     color: colors.error,
     padding: "10px",
     borderRadius: 8,
     marginBottom: 12,
   },
 };
-
-

@@ -1,24 +1,61 @@
 .task-card {
-  backdrop-filter: blur(12px);
-  background: #72717130;
-  border-radius: 12px;
   padding: 15px;
-  margin-bottom: 10px;
+  border-radius: 12px;
+  background: #72717130;
   border: 1px solid rgba(255,255,255,0.15);
-  transition: all 0.4s ease;
+  backdrop-filter: blur(12px);
+  color: white;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.task-card.fading-out {
+  opacity: 0;
+  transform: translateX(50px);
 }
 
 .task-title.completed-text {
   text-decoration: line-through;
-  color: #ccc;
+  color: rgba(255,255,255,0.6);
 }
 
-.priority-tag.high { background-color: #e74c3c; color: white; padding: 3px 8px; border-radius: 6px; }
-.priority-tag.medium { background-color: #f1c40f; color: white; padding: 3px 8px; border-radius: 6px; }
-.priority-tag.low { background-color: #2ecc71; color: white; padding: 3px 8px; border-radius: 6px; }
+.priority-tag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85em;
+}
 
-.completion-btn { padding: 5px 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
-.completion-btn.completed { background-color: #2ecc71; color: white; }
-.completion-btn.pending { background-color: #f39c12; color: white; }
+.completion-btn {
+  margin-right: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-.delete-btn { padding: 5px 10px; border-radius: 6px; border: none; cursor: pointer; background-color: red; color: white; margin-left: 5px; }
+.completion-btn.pending {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.completion-btn.completed {
+  background-color: #5cb85c;
+  color: white;
+}
+
+.delete-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background-color: red;
+  color: white;
+}
+.task-card.overdue {
+  border-color: red;
+  background-color: rgba(255, 77, 77, 0.25);
+}
+
+.task-title.completed-text {
+  color: rgba(255,255,255,0.6);
+}
